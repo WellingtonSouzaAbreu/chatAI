@@ -1,10 +1,6 @@
 import styled from "styled-components";
 
-interface MessageItemProps {
-    isAuthor: boolean;
-}
-
-export const MessagesListContainer = styled.div`
+export const MessageListContainer = styled.div`
     padding: 10px;
     margin: 0;
     display: flex;
@@ -29,15 +25,19 @@ export const MessagesListContainer = styled.div`
     }
 `;
 
+interface MessageItemProps {
+    isAuthor: boolean;
+}
+
 export const MessageItem = styled.li<MessageItemProps>`
     list-style: none;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: ${({ isAuthor }) => isAuthor ? '10px 10px 0px 10px' : '10px 10px 10px 0px'};
     margin-bottom: 8px;
     word-wrap: break-word;
-    background-color: ${(props) => (props.isAuthor ? '#4CAF50' : '#2196F3')};
+    background-color: ${({ isAuthor }) => (isAuthor ? '#4CAF50' : '#2196F3')};
     color: white;
-    align-self: ${(props) => (props.isAuthor ? 'flex-end' : 'flex-start')};
+    align-self: ${({ isAuthor }) => (isAuthor ? 'flex-end' : 'flex-start')};
   
     ::before {
       content: '';
@@ -47,7 +47,10 @@ export const MessageItem = styled.li<MessageItemProps>`
       border-style: solid;
       border-width: 10px;
       margin-top: -10px;
-      ${(props) => (props.isAuthor ? 'border-color: transparent transparent transparent #4CAF50;' : 'border-color: transparent #2196F3 transparent transparent;')}
-      ${(props) => (props.isAuthor ? 'right: 0' : 'left: 0')};
+      ${({ isAuthor }) => (isAuthor ? 'border-color: transparent transparent transparent #4CAF50;' : 'border-color: transparent #2196F3 transparent transparent;')}
+      ${({ isAuthor }) => (isAuthor ? 'right: 0' : 'left: 0')};
+      
+      /* Adiciona uma borda inferior na ponta correspondente */
+      ${({ isAuthor }) => (isAuthor ? 'border-bottom: 10px solid #4CAF50;' : 'border-bottom: 10px solid #2196F3;')}
     }
 `;

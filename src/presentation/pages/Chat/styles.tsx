@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { TextInput } from '../../components/TextInput';
 
 export const ChatContainer = styled.div`
 	display: flex;
@@ -27,7 +26,3 @@ export const Title = styled.h1`
 	margin-bottom: 20px;
 `;
 
-export const ChatInput = styled(TextInput)`
-	margin-bottom: 100px;
-	font-size: 50px;
-`;

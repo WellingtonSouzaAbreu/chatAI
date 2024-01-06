@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react"
-import { MessageItem, MessagesListContainer } from "./styles"
+import { MessageItem, MessageListContainer } from "./styles"
+import { MessageObject } from "../../../domain/entity/chat/types"
+import { userTypes } from "../../../domain/entity/user"
 
-interface MessagesListProps {
-    messages: string[]
+interface MessageListProps {
+    messages: MessageObject[]
 }
 
-function MessagesList({ messages }: MessagesListProps) {
+function MessageList({ messages }: MessageListProps) {
     const listRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -15,10 +17,10 @@ function MessagesList({ messages }: MessagesListProps) {
     const scrollToEnd = () => listRef.current && listRef.current && listRef.current.scrollTo(0, listRef.current.scrollHeight)
 
     const renderMessages = () => {
-        return messages.map((message, index) => (
+        return messages.map(({ message, author }, index) => (
             <MessageItem
                 key={index}
-                isAuthor={index % 2 === 0}
+                isAuthor={author === userTypes.USER}
             >
                 {message}
             </MessageItem>
@@ -26,12 +28,12 @@ function MessagesList({ messages }: MessagesListProps) {
     }
 
     return (
-        <MessagesListContainer ref={listRef}>
+        <MessageListContainer ref={listRef}>
             {renderMessages()}
-        </MessagesListContainer>
+        </MessageListContainer>
     )
 }
 
 
 
-export { MessagesList }
+export { MessageList }
