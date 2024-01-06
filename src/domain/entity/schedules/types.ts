@@ -5,3 +5,8 @@ export type Scheduling = {
     service: number
     message: string
 }
+
+export type KeyValueScheduling = {
+    [key: string]: string
+}
+

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChatBox, ChatContainer, Title } from './styles';
 import { SendMessageButton } from '../../components/SendMessageButton';
 import { ChatAdapter } from '../../adapters/ChatAdapter';
@@ -6,7 +6,8 @@ import { MessageList } from '../../components/MessageList';
 import { MessageObject } from '../../../domain/entity/chat/types';
 import { TextInput } from '../../components/TextInput';
 import { GoogleCloudService } from '../../../services/googleCloud/GoogleCloudService';
-import { Scheduling } from '../../../domain/entity/schedules/types';
+import { KeyValueScheduling, Scheduling } from '../../../domain/entity/schedules/types';
+import { defaultScheduleKeys } from '../../../domain/entity/schedules';
 
 const { sendMessageToAIAssistence } = GoogleCloudService()
 const { generateNewUserMessage, generateNewAIMessage } = ChatAdapter()
@@ -16,7 +17,7 @@ function Chat() {
     const [messageList, setMessageList] = useState<MessageObject[]>([]);
     const [textInputMessageIsLocked, setTextInputMessageIsLocked] = useState<boolean>(false);
 
-    const [scheduling, setScheduling] = useState<Scheduling>()
+    const [scheduling, setScheduling] = useState<Partial<Scheduling>>()
 
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -59,8 +60,11 @@ function Chat() {
         try {
             setTextInputMessageIsLocked(true)
 
-            const AIMessageResponse = await sendMessageToAIAssistence(textMessage)
-            if (AIMessageResponse.message !== 'Invalid input. Please provide a valid response.') {
+            const pendingData = getPendingDataFromScheduling()
+            console.log(pendingData)
+            const AIMessageResponse = await sendMessageToAIAssistence(textMessage, pendingData)
+
+            if (textInputRejectedByAI(AIMessageResponse.message)) {
                 console.log({ ...scheduling, ...AIMessageResponse })
                 setScheduling({ ...scheduling, ...AIMessageResponse })
 
@@ -81,6 +85,21 @@ function Chat() {
         } finally {
             setTextInputMessageIsLocked(false)
         }
+    }
+
+    const textInputRejectedByAI = (textMessage: string) => {
+        return textMessage !== 'Invalid input. Please provide a valid response.'
+    }
+
+    const getPendingDataFromScheduling = () => {
+        if (!scheduling) return defaultScheduleKeys.map((schedule) => Object.values(schedule)[0]);
+
+        return defaultScheduleKeys
+            .filter((key) => {
+                const indexKey = key as KeyValueScheduling
+                return !scheduling && !scheduling[Object.keys(indexKey)[0]]
+            })
+            .map(item => Object.values(item)[0]);
     }
 
     const clearInputMessage = () => setTextMessage('')

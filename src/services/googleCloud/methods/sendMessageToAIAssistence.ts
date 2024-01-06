@@ -4,9 +4,10 @@ import { Scheduling } from '../../../domain/entity/schedules/types'
 
 const GOOGLE_CLOUD_URL = process.env.REACT_APP_GOOGLE_CLOUD_URL
 
-async function sendMessageToAIAssistence(message: string): Promise<Scheduling> {
+async function sendMessageToAIAssistence(message: string, pendingData: string[]): Promise<Scheduling> {
     return await axios.post(`${GOOGLE_CLOUD_URL}/chatLocal`, {
-        userInput: message
+        userInput: message,
+        pendingData: pendingData,
     },
         googleCloudRequestHeader
     ).then(response => {
