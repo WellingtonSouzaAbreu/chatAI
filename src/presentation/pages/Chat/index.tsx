@@ -8,6 +8,7 @@ import { TextInput } from '../../components/TextInput';
 import { GoogleCloudService } from '../../../services/googleCloud/GoogleCloudService';
 import { KeyValueScheduling, Scheduling } from '../../../domain/entity/schedules/types';
 import { defaultScheduleKeys } from '../../../domain/entity/schedules';
+import { Schedules } from '../Schedules';
 
 const { sendMessageToAIAssistence } = GoogleCloudService()
 const { generateNewUserMessage, generateNewAIMessage } = ChatAdapter()
@@ -17,7 +18,7 @@ function Chat() {
     const [messageList, setMessageList] = useState<MessageObject[]>([]);
     const [textInputMessageIsLocked, setTextInputMessageIsLocked] = useState<boolean>(false);
 
-    const [scheduling, setScheduling] = useState<Partial<Scheduling>>()
+    const [scheduling, setScheduling] = useState<Scheduling>()
 
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -106,6 +107,9 @@ function Chat() {
 
     return (
         <ChatContainer>
+            <Schedules
+                schedules={[scheduling as any]} // TODO Type
+            />
             <ChatBox>
                 <Title>CHAT AI</Title>
                 <MessageList messages={messageList} />
